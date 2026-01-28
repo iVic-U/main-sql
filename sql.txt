@@ -1,0 +1,198 @@
+Standard Lenguage
+
+CRUD
+
+Diagrama ER CHEN: Entidad (Objeto) = Representacion
+
+Atributos SimpLes y Compuestos (Tienen atributos: Los atributos pueden ser Multivalor | Derivados: Se pueden obtener a partir de otro Atributo)
+Key: Identificador Unico (Atributo)
+Conciso - Preciso 
+
+Para crear una DB debo de tener una tabla (entidad), que la tabla tienen filas (registros) y columnas (campos, la cual tiene un valor de campo)
+
+Los campos deben de tener un TYPE
+
+Real = Numeros Reales
+Numeric = Operaciones Matematicas
+
+Query = Consulta: Pedir info a la DB. Si quiero hacer 2 consultas las debo de separar con ';'
+
+Create:
+
+    CREATE TABLE "xName" (
+        "xCampo" xTypeVar,
+        "xCampo" xType, etc
+    )
+    PRIMARY KEY ("xCampo AUTOINCREMENT")
+
+Select:
+
+    SELECT * (campos) FROM xTableName --> Selecciona todo de la tabla. Es una tabla NUEVA
+    SELECT Products AS Productos FROM Product --> Cambia Products a Productos
+
+    SELECT * FROM Products
+    ORDER BY xCampo, xCampo --> By default Asc | Desc --> Ordena con base al Campo, pueden haber varios campos
+
+    SELECT DISTINCT xCampo --> Elimina duplicados
+
+Insert:
+
+    INSERT INTO xTableName (campos) --> Insertar en la tabla que tiene X campos
+    VALUES ('value', 'value', value),
+        ('value', 'value', value) --> Puedo agregar multiples registros
+
+Delete:
+
+    Delete FROM xTableName --> Delete Everything
+
+Identifiers: Campo que permite identificar un registro de forma unica
+    Primary Key MUST AutoIncrement
+    Foreing Key: Permite relacionar una tabla con otra ya (DB con otra DB) que hace referencia (el nombre del campo deberia ser el mismo) a otro PK de otra tabla (no siempre son eficientes)
+
+Conditions = Where
+
+    SELECT xCampo | * (Todo) FROM xTableName --> Seleciona de la tabla con base a xCampo
+    WHERE xCampo (registro) = Condition --> Devuelve xCampo que cumpla la condicion
+
+Operadores con Condition:
+
+    SELECT * FROM xTableName
+    WHERRE BETWEEN (Lo que este en medio de X y Y AND | OR xCondition) | NOT (Negacion) xCampo xCondition AND | OR  xCondition --> Se puede jugar con varios xCampo y con Operadores
+    (xCondition OR xCondition) AND xCondition
+    != --> Distinto de --> Este es un Operador de Comparacion no Logico
+
+Update:
+    UPDATE xTableName SET xCampo = New Var
+    WHERE xCampo = Condition
+
+Limit: Limitador
+
+    SELECT * FROM xTableName
+    WHERE xCampo = xCondition AND NOT xCampo = xCondition
+    Limit 5 --> Solo retorna 5 registros
+
+Ejemplo Unificando Todo lo anterior:
+
+    SELECT * FROM Products --> Selecciona de Products
+    WHERE NOT CategoryID = 6 --> Donde no tenga categoria 6
+    AND NOT SupplierID = 4 --> Y donde no sea del SupplierID 4 
+    AND Price <= 30 --> Y donde el Price sea menos o igual a 30
+    ORDER BY Random() --> Que nos seleccione de manera Random
+    LIMIT 3 --> Con un limite de resultados de 3
+
+Operador LIKE:
+    Utiliza Comodines, es como si fuera un '='. Se pueden combinar comodines
+    Comodines:
+        '%' --> Inicia o termina con X cosa. Se puede usar en ambos casos 'X%' | '%X' | '%X%'
+        '_' --> Que tenga algo y luego los '_' sirven como caracteres
+    
+Operador NULL & NOT NULL: Para ver Nulos
+    WHERE xCampo IS NULL | IS NOT NULL
+
+Operador IN | NOT IN: Se puede utilizar en clausuras SELECT, UPDATE & DELETE
+    SELECT * FROM Products
+    WHERE xID IN (2,3,4,5) --> Muestra lo que esta en el rango de los #
+
+    IN funciona para hacer Subconsultas (No es la mejor practica btw) 
+
+Funciones de Agregacion: Debe de ir con la sentencia SELECT
+    SELECT xFunction() FROM  xTableName
+
+Comentarios con --
+
+Group By & Having
+
+Group By: Agrupa por xCampo, pero no hace referencia a 
+Having: Filtrado de grupo, va despues de un Group By y antes de un Order By. Utilizado en Condiciones con Funciones de Agregacion
+
+Subqueries: Cool pero ya existen los Joins que es mejor, porque las Subqueries son muy pesadas
+    Devuelven informacion. Por ende, solo son Select.
+
+    SELECT Product_ID, 
+           Quantity, 
+           (SELECT ProductName FROM products WHERE OD.ProductID = ProductID) -> Subquery
+    FROM OrderDetails OS --> Cambia el nombre como si fuera un AS
+
+    Dentro del FROM (Se puede poner toda una subquery, creando asi una tabla virtual)
+
+Join: Combina info de 2 o mas tablas y unirlas (Utilizan Indices para que sean rapidas)
+
+    Inner Join (Devuelve coincidencia):
+        SELECT LastName, FirstName, OrderID FROM Employee e,
+        INNER JOIN Orders o ON e.EmployeeID = o.EmployeeID --> Une la tabla Orders con la condicion ON 
+    
+    Left Join (Toma toda la Tabla A y Parte de la Tabla B)
+        SELECT LastName, FirstName, OrderID FROM Employee e,
+        LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID --> Devuelve toda la tabla Employee y devuelve Parte de la tabla Orders con las coincidencias
+
+    Right Join (Contrario al Left, toda la tabla B pero solo la A En SQL no se puede hacer, pero se puede Simular) 
+        Mismo codigo que el pasado pero intercambia el nombre de las Tablas
+
+    Full Join (Devuelve Todo)
+
+    UNION --> Junta una consulta con otra consulta en una tabla, funciona para Unir un LEFT JOIN con un RIGHT JOIN, simulando un FULL JOIN, al hacer este Elimina datos Duplicados
+    UNION ALL --> Debe tener las tablas con mismo amount de columns y mismo tipo de datos
+
+    Cross Join (Devuelve todas las filas de una tabla * por las de otra tabla)
+
+Cardinalidad: Especifica la relacion que hay entre 2 entidades (Como se relacionan las claves)
+    1:1
+    1:n | n:1
+    n:m (Muchos a muchos) --> debe crearse una tabla intermediaria
+
+Normalizacion de DB: Que el sistema de la DB sea más eficiente
+
+    1 forma normal: Que el cada campo tenga un unico tipo de valor
+    2 forma normal: Que cada atributo que no sea un Key debe depender por completo de la Primary Key (PK)
+    3 forma normal: Que un atributo no dependa de otro atibuto que depende por completo de la PK
+    4 forma normal: Cada tabla debe tener una Clave Primaria Compuesta, consta de multiples columnas en lugar de 1 sola
+    5 forma normal: Que no haya dependencias de union entre atributos
+
+Indices: Mejora el rendimiento para realizar las consultas más rapidas. Solo en las que realmente lo valga, porque a su vez, esto conlleva mucha escritura en el disco y podria hacer el proceso más lento
+
+    Unicos: Primary Key, permite la busqueda con cada fila
+
+    No Unicos: 
+        CREATE INDEX xName ON xTableName (xCampo) --> Crea un Index con base a una columna, para que las consultas con base a esa columna sean más eficaces
+        CREATE UNIQUE INDEX --> Permite que no hayan atributos duplicados, ejm, para los emails
+    
+    Indices Compuestos: Crean un Unique Index con 2 campos, de manera que no se permite repetir una combinacion en los campos, o sea, que no se repita un mismo valor, ejm, Nombre-Apellido
+
+Views:
+
+    CREATE VIEW xViewName AS xQuery --> Crea una vista que puede ser una tabla personalizada, pero basicamente guarda la vista que tiene dicha Query ya guardada (como si fuera una Var)
+    DROP VIEW xViewName
+
+Bloqueos y Transacciones: 
+
+    SHARED LOCK --> Pueden leer pero no pueden escribir
+
+    EXCLUSIVE LOCK --> Ni leer ni escribir
+
+    BEGIN; --> Inicia una transaccion = Inicia una modificacion o Query
+    COMMIT --> La DB debe aceptar la info
+    ROLLBACK --> Retroce antes del ultimo cambio realizado sin haber hecho COMMIT
+
+Procedimientos Almacenados: Conjunto de Comandos almacenados en una DB, permite que los procesos sean más eficientes
+    Se almacenan consultas en un Proceso para realizar las operaciones. Solo que en SQL no se puede realizar, por eso se hace en el Backend
+    
+UDF: Funcion que puede ser utilizada por SQL. Debe estar registrada en SQL, apesar de que la llamada sea realizada desde Python
+
+    En Python: Esto es un Begin
+        import sqlite3
+
+    Obtener toda la info de la DB con Py:
+        import pandas as pd
+
+        with sqlite3.connect("xDataBaseName") as xVar: (cierra la conexion automaticamente)
+            xVar.create_function("xFunctionName",parametros de la funcion,nombre de la funcion en Py)
+            xVar = xVar.cursor()
+            cursor.execute('xQUERY')
+            results = cursor.fetchall()
+            results_df = pd.DataFrrame(results)
+
+        print(results_df)
+
+    Con Pandas la conexion y la query se pueden hacer en una sola:
+        xNewVar = pd.read_sql_query(xQUERY, xVarConection)
+        
